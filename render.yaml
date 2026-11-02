@@ -1,0 +1,14 @@
+services:
+  - type: worker
+    name: job-agent-hourly-worker
+    runtime: python
+    buildCommand: pip install -r requirements.txt && playwright install --with-deps chromium
+    startCommand: python main.py --watch --interval 60
+    envVars:
+      - key: DRY_RUN
+        value: "false"
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+

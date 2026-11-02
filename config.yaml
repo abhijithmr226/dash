@@ -1,0 +1,115 @@
+candidate:
+  name: Abhijith MR
+  email: abhijithmr226@gmail.com
+  phone: "+91 62359 62254"
+  location: Kerala, India
+  links: "linkedin.com/in/abhijithmr226 | github.com/abhijithmr226 | abhijithmr.me"
+
+run:
+  daily_limit: 25          # jobs picked per day
+  max_alerts_per_run: 15   # instant alerts per run (extra matches roll into the next run)
+  max_auto_emails: 5       # max emails sent directly per day (rest go to digest)
+  dry_run: false           # false = live notifications to Telegram
+  min_score: 5
+  max_age_days: 21
+  reapply_after_days: 90   # never contact the same company twice within this window
+  max_years_required: 2
+  model: gemini-1.5-flash
+
+# Strictly India locations (cities, states, or remote within India)
+locations_ok: [india, kerala, kochi, cochin, trivandrum, thiruvananthapuram, calicut, kozhikode,
+  bangalore, bengaluru, chennai, hyderabad, pune, mumbai, navi mumbai, delhi, new delhi,
+  noida, gurgaon, gurugram, kolkata, ahmedabad, surat, coimbatore, karnataka, tamil nadu,
+  maharashtra, gujarat, telangana, andhra, remote - india, work from home india]
+
+locations_bad_phrases: ["us only", "u.s. only", "united states only", "us-based only",
+  "must be located in the us", "authorized to work in the us only", "eu only", "uk only",
+  "canada only", "mexico", "germany", "australia", "brazil", "latin america", "latam", "emea"]
+
+reject_title_words: [senior, sr., "sr ", lead, staff, principal, manager, head, director,
+  architect, vp, "ii", "iii", "iv", "full stack lead", executive vice president, general manager,
+  mandarin, german, french, spanish, japanese, arabic, italian, dutch, russian, portuguese]
+
+# Multi-Platform Sources Configuration
+google_jobs_queries:
+  - { query: "fresher customer support jobs", location: "Kochi" }
+  - { query: "customer care executive fresher", location: "Bengaluru" }
+  - { query: "fresher technical support", location: "India" }
+  - { query: "chat support fresher", location: "Remote India" }
+  - { query: "fresher front end developer", location: "Bengaluru" }
+  - { query: "cyber security fresher jobs", location: "India" }
+
+linkedin_queries:
+  - { query: "customer support fresher", location: "Kochi" }
+  - { query: "customer care executive fresher", location: "Bengaluru" }
+  - { query: "fresher customer service", location: "Hyderabad" }
+  - { query: "technical support fresher", location: "Chennai" }
+  - { query: "chat support fresher", location: "India" }
+  - { query: "frontend developer fresher", location: "India" }
+  - { query: "soc analyst fresher", location: "India" }
+
+internshala_categories:
+  - "customer-support-jobs"
+  - "technical-support-jobs"
+  - "front-end-development-jobs"
+  - "cyber-security-jobs"
+
+freshersworld_categories:
+  - "customer-support-jobs"
+  - "it-software-jobs"
+  - "networking-jobs"
+
+# Company boards (public APIs).
+greenhouse: [gitlab, cloudflare, stripe, airbnb, discord, figma, mongodb, datadog, elastic, canonical, okta]
+lever: [palantir, cred, meesho]
+
+jobicy_tags: ["support", "frontend", "security"]
+remoteok_tags: ["junior"]
+remotive_queries: ["customer support", "junior developer", "frontend"]
+
+profiles:
+  support:
+    cv: cvs/frontend_cv.pdf
+    title_keywords: [customer care, customer support, customer service, support executive, technical support,
+      tech support, desktop support, helpdesk, voice process, non voice, non-voice, chat support,
+      bpo, call center, customer operations, client support, customer success associate, service desk,
+      operations associate, inbound, outbound, process associate, telecalling, customer experience]
+    skill_keywords: [communication, english, hindi, malayalam, customer service, troubleshooting, crm,
+      ticketing, email support, chat, voice, problem solving, client assistance, ms office, computer skills,
+      customer satisfaction]
+    facts:
+      - "B.Sc. Computer Science with Cyber Security, Rathinam College (completing May 2026)"
+      - "Fluent verbal and written communication in English, Malayalam, and Hindi"
+      - "Strong technical troubleshooting acumen, skilled in computer fundamentals, software tools, and CRM workflows"
+      - "Customer-oriented mindset with hands-on experience providing client assistance and resolving user queries"
+      - "Fast learner with excellent adaptability in high-pace voice, non-voice, and chat support environments"
+
+  frontend:
+    cv: cvs/frontend_cv.pdf
+    title_keywords: [front end, frontend, front-end, web developer, ui developer, ui engineer,
+      react, javascript developer, website developer, web designer, ui/ux developer]
+    skill_keywords: [html, css, javascript, react, responsive, figma, git, webrtc, socket.io, ui/ux, accessibility, tailwind]
+    facts:
+      - "B.Sc. Computer Science with Cyber Security, Rathinam College (graduating May 2026)"
+      - "Built Omeagle: real-time random video/text chat platform with WebRTC and Socket.IO (omeagle.online)"
+      - "Built Krynn Tools: browser-based productivity and developer utilities platform (krynntools.online)"
+      - "Built a Kerala hotel discovery and booking platform (hotelsnearmeinkerala.com)"
+      - "Built the Hawksbill Security company website with responsive, SEO-friendly layouts (hawksbillsecurity.in)"
+      - "Proficient in HTML5, CSS3, JavaScript (ES6+), React.js, Tailwind CSS, Git, and responsive web design"
+      - "Completed Cybersecurity internship at Rednox Technologies (Jun-Jul 2025)"
+
+  cyber:
+    cv: cvs/cyber_cv.pdf
+    title_keywords: [soc analyst, security analyst, cyber security, cybersecurity, information security,
+      infosec, penetration, pentest, vulnerability, security engineer, threat, blue team,
+      security operations, appsec, application security, it security, iam]
+    skill_keywords: [splunk, siem, vulnerability, log analysis, nmap, iam, threat intelligence, python,
+      incident response, owasp, network security, patch management, burp, wireshark]
+    facts:
+      - "B.Sc. Computer Science with Cyber Security, Rathinam College (graduating May 2026)"
+      - "Cyber Security Intern at Rednox Technologies (Jun-Jul 2025): vulnerability assessments, patch management, Splunk SIEM log monitoring, threat intel reports, blue team simulations"
+      - "Completed TCS Cybersecurity Analyst job simulation (IAM & access control)"
+      - "Built ReconX (Python web reconnaissance & vulnerability tool, tested on 30+ live domains)"
+      - "Built Nmap by Ash (PyQt6 modern GUI for network exploration and port scanning)"
+      - "Built Passmatic, an AES-256 encrypted password manager used by 20+ testers"
+      - "Holds Google Cybersecurity Professional Certificate and Microsoft/LinkedIn Career Essentials in Cybersecurity"
