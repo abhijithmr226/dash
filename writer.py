@@ -6,6 +6,21 @@ import re
 
 log = logging.getLogger("writer")
 
+
+def load_env():
+    for p in [".env", os.path.join("job_agent", ".env")]:
+        if os.path.exists(p):
+            try:
+                for line in open(p, encoding="utf-8"):
+                    if "=" in line and not line.startswith("#"):
+                        k, v = line.strip().split("=", 1)
+                        os.environ.setdefault(k.strip(), v.strip().strip('"\''))
+            except Exception:
+                pass
+
+
+load_env()
+
 SYSTEM = (
     "You write short, compelling job application notes for a fresher candidate. Use ONLY the facts provided; "
     "never invent employers, years of experience, or fake metrics. Keep to 80-110 words, professional, direct, "
@@ -23,7 +38,6 @@ def _smart_fallback(job, profile, cfg):
     desc_lower = job.description.lower()
     title_lower = job.title.lower()
 
-    # Check if this is a Customer Support / Care role
     is_support = any(
         k in title_lower or k in desc_lower
         for k in ["customer", "support", "care", "service", "bpo", "voice", "chat", "helpdesk", "telecalling"]
@@ -48,7 +62,6 @@ def _smart_fallback(job, profile, cfg):
         )
         return subject, body
 
-    # Tech roles (Frontend / Cyber): select most relevant project based on description keywords
     chosen_facts = []
     for f in facts:
         if any(w in desc_lower for w in ["webrtc", "socket", "real-time", "chat"]) and "omeagle" in f.lower():
@@ -96,7 +109,37 @@ def _smart_fallback(job, profile, cfg):
 
 
 def write_note(job, profile, cfg):
-    # Try Anthropic Claude
+    load_env()
+
+    # 1. Try Google Gemini API
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    if gemini_key:
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=gemini_key)
+            c = cfg["candidate"]
+            prompt = (
+                f"{SYSTEM}\n\nCandidate: {c['name']}, Phone: {c['phone']}, Email: {c['email']}, Links: {c['links']}\n"
+                "Facts:\n- " + "\n- ".join(profile.get("facts", [])) +
+                f"\n\nJob: {job.title} at {job.company} ({job.location})\n"
+                f"Description:\n{job.description[:2500]}"
+            )
+            # Try gemini-2.5-flash then fallback
+            for model_name in ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-1.5-flash"]:
+                try:
+                    model = genai.GenerativeModel(model_name)
+                    resp = model.generate_content(prompt)
+                    text = resp.text.strip()
+                    if text.upper().startswith("SUBJECT:"):
+                        first, _, rest = text.partition("\n")
+                        return first.split(":", 1)[1].strip(), rest.strip()
+                    return f"Application: {job.title} - {c['name']}", text
+                except Exception:
+                    continue
+        except Exception as e:
+            log.warning("Gemini note generation failed: %s; falling back", e)
+
+    # 2. Try Anthropic Claude
     if os.getenv("ANTHROPIC_API_KEY"):
         try:
             import anthropic
@@ -121,27 +164,5 @@ def write_note(job, profile, cfg):
         except Exception as e:
             log.warning("Anthropic note generation failed: %s; falling back", e)
 
-    # Try Google Gemini
-    if os.getenv("GEMINI_API_KEY"):
-        try:
-            import google.generativeai as genai
-            genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-            c = cfg["candidate"]
-            prompt = (
-                f"{SYSTEM}\n\nCandidate: {c['name']}, {c['phone']}, {c['email']}, {c['links']}\n"
-                "Facts:\n- " + "\n- ".join(profile.get("facts", [])) +
-                f"\n\nJob: {job.title} at {job.company} ({job.location})\n"
-                f"Description:\n{job.description[:2500]}"
-            )
-            model = genai.GenerativeModel("gemini-1.5-flash")
-            resp = model.generate_content(prompt)
-            text = resp.text.strip()
-            if text.upper().startswith("SUBJECT:"):
-                first, _, rest = text.partition("\n")
-                return first.split(":", 1)[1].strip(), rest.strip()
-            return f"Application: {job.title} - {c['name']}", text
-        except Exception as e:
-            log.warning("Gemini note generation failed: %s; falling back", e)
-
-    # Smart Dynamic Fallback
+    # 3. Smart Dynamic Fallback
     return _smart_fallback(job, profile, cfg)
